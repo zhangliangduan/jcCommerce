@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xunmeng.jccommerce.mapper.JcOrdersMapper">
+
+    <select id="getPurchasesNumbers" resultType="com.xunmeng.jccommerce.dto.count.JcOrdersCount">
+        SELECT phone, COUNT(*) AS count
+        FROM jc_orders
+        WHERE create_time >= #{startTime}
+        AND phone IN
+        <foreach collection="phones" item="phone" open="(" separator="," close=")">
+            #{phone}
+        </foreach>
+        GROUP BY phone
+    </select>
+
+    <select id="getSaleAmount" resultType="com.xunmeng.jccommerce.dto.order.JcAmount">
+        SELECT sum(sale) AS total_sale
+        FROM jc_orders
+        WHERE create_time &lt;= #{start}
+        AND create_time >= #{end}
+        AND is_after_sale = #{type}
+    </select>
+    <select id="getAfterSaleAmount" resultType="java.math.BigDecimal">
+        SELECT sum(after_sale_amount) AS total_after_sale
+        FROM jc_orders
+        WHERE create_time &lt;= #{start}
+        AND create_time >= #{end}
+        AND is_after_sale = 1
+    </select>
+    <select id="getSaleTend" resultType="com.xunmeng.jccommerce.dto.count.JcOrdersSaleTendVO">
+        select sum(sale) as all_sale,sum(cost) all_cost,count(*) as all_count
+        where create_time &lt;= #{start}
+                AND create_time >= #{end}
+                AND is_after_sale = 0
+    </select>
+
+
+
+</mapper>
